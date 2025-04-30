@@ -21,7 +21,7 @@ let songs: Song[] = []
 // Init listener page
 document.addEventListener('DOMContentLoaded', () => {
     djs = window.listenerApp.initialData.djs
-    songs = window.listenerApp.initialData.songs
+    songs = filterAvailableSongs(djs, window.listenerApp.initialData.songs)
 
     initWebSocket() // connect to socket.io
     initEventListeners()
@@ -37,8 +37,8 @@ function initWebSocket() {
             console.log("Database change detected. Updating...")
             const res1 = await axios.get('http://localhost:3000/api/djs')
             const res2 = await axios.get('http://localhost:3000/api/songs')
-            djs = res1.data
-            songs = res2.data
+            djs = res1.data as Array<DJ>
+            songs = filterAvailableSongs(djs, res2.data as Array<Song>)
 
             updateTableData(djs, songs)
 
@@ -47,6 +47,18 @@ function initWebSocket() {
             console.error('Error reloading data:', error)
         }
     })
+}
+
+// Note: could make this more efficient by new mongodb query
+function filterAvailableSongs(djs: DJ[], songs: Song[]) {
+    const djsWithSongs: DJ[] = djs.filter(dj => dj.songs.length > 0)
+    // // One of the DJs has a song
+    // return songs.filter(song => djsWithSongs.some(dj => dj.songs.some(s => s === song.songID)))
+    // return Array.from(new Set(djsWithSongs.map(dj => dj.songs).flat()))
+
+    // Songs objects from list of available songIDs
+    const availableSongIDs = new Set(djs.flatMap(dj => dj.songs))
+    return songs.filter(song => song.songID != null && availableSongIDs.has(song.songID))
 }
 
 function initEventListeners() {
