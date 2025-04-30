@@ -1,0 +1,138 @@
+[
+  {
+    "djID": 1,
+    "name": "One",
+    "songs": [
+      4,
+      16
+    ],
+    "events": [
+      {
+        "eventID": 0,
+        "dj": "One",
+        "time": "09:00 - 10:00",
+        "songs": [
+          "Whimsical Waves"
+        ]
+      }
+    ]
+  },
+  {
+    "djID": 2,
+    "name": "Two",
+    "songs": [
+      16
+    ],
+    "events": [
+      {
+        "eventID": 1,
+        "dj": "Two",
+        "time": "15:00 - 16:00",
+        "songs": [
+          "Desert Drift",
+          "Polar Pulse"
+        ]
+      },
+      {
+        "eventID": 2,
+        "dj": "Two",
+        "time": "16:00 - 17:00",
+        "songs": [
+          "Whimsical Waves"
+        ]
+      },
+      {
+        "eventID": 3,
+        "dj": "Two",
+        "time": "15:00 - 16:00",
+        "songs": [
+          "Whimsical Waves"
+        ]
+      }
+    ]
+  },
+  {
+    "djID": 3,
+    "name": "Nightwave",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 4,
+    "name": "Thunder",
+    "songs": [
+      19, 
+      20
+    ],
+    "events": []
+  },
+  {
+    "djID": 5,
+    "name": "Luna",
+    "songs": [
+      20
+    ],
+    "events": [
+      {
+        "eventID": 4,
+        "dj": "Luna",
+        "time": "17:00 - 18:00",
+        "songs": [
+          "Polar Pulse"
+        ]
+      },
+      {
+        "eventID": 5,
+        "dj": "Luna",
+        "time": "17:00 - 18:00",
+        "songs": []
+      }
+    ]
+  },
+  {
+    "djID": 6,
+    "name": "Solar Flare",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 7,
+    "name": "Echo",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 8,
+    "name": "Quantum",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 9,
+    "name": "Nebula",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 10,
+    "name": "Aurora",
+    "songs": [],
+    "events": []
+  },
+  {
+    "djID": 11,
+    "name": "Vortex",
+    "songs": [],
+    "events": [
+      {
+        "eventID": 6,
+        "dj": "Vortex",
+        "time": "17:00 - 18:00",
+        "songs": [
+          "Hybrid Moments",
+          "The Carnival of the Animals: XIII, The Swan"
+        ]
+      }
+    ]
+  }
+]

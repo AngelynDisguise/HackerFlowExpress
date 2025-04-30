@@ -2,6 +2,10 @@
 
 # npm
 node_modules
+src/node_modules
 package-lock.json
 *.log
 *.gz
+
+# ts
+dist

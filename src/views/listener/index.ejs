@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link href="/css/group9.css" rel="stylesheet" type="text/css">
+        <link href="/css/listener.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <!----- App Title ----->
+        <%- include('../partials/title.ejs') %>
+
+        <!----- Navigation ----->
+        <div class="navbar">
+            <button type="button" onclick="alert('Already logged in!')">Listener</button>                
+            <button type="button"> <a href="/producer">Producer</a></button>
+            <button type="button"> <a href="/dj">DJ</a></button>
+            <button type="button" onclick="logout()"> <a href="/">Logout</a></button>
+        </div>
+
+        <div class="listener-body-wrapper">
+            <!----- Welcome message ----->
+            <h1 id="listener-name" style="margin: 20px;"></h1>
+            <button class="change-name">Change Name</button>
+
+            <!----- Beginning of page body (contains boxes: Preferences and Songs) ----->
+            <div class="listener-sub-body-wrapper">
+                <!----- PREFERENCES (LEFT BOX) ----->
+                <div class="listener-preference-body">
+                    <!-- Search -->  
+                    <h3>Search a Song:</h3>
+                    <div class="listener-search">
+                        <!-- No name by default -->
+                        <form name="song-form" onsubmit="return validateForm(event)">
+                            <label>Song:</label>
+                            <input id="search-song" name="search-song" type="text" class="search-input">
+                            <input id="search" type="submit" value="Search">
+                        </form>
+                    </div>   
+                    <div class="error-message-container">
+                        <p id="error-message" class="error-message"></p>
+                    </div>
+                    <!-- Genre -->            
+                    <h3 style="margin-top: 0;">Select your Genre:</h3>
+                    <div class="listener-genre">  
+                        <!-- All by default -->                       
+                        <button class="genre-button1" type="button">Electronic</button>
+                        <button class="genre-button2" type="button">Lo-Fi</button>
+                        <button class="genre-button3" type="button">Ambient</button>
+                        <button class="genre-button4" type="button">Classical</button>
+                    </div>
+                
+                    <!-- DJ -->  
+                    <h3> Select your DJ:</h3>
+                    <div class="listener-dj">
+                        <select id="DJ" name="DJ">
+                            <option value="AllDJ">All DJ</option>
+                            <% djs.forEach((dj) => { %>
+                                <option value="<%= dj.name %>"><%= dj.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <button type="button" onclick="clearSearch()">Clear</button>  
+
+                </div>
+
+                <!----- DISPLAY SONGS (RIGHT BOX) ----->
+                <div class="listener-song-body">
+                    <div class="listener-song-checkbox">
+                        <h2>Upcoming Songs</h2>
+                    </div>
+
+                    <!-- Songs Table -->
+                    <div class="table-section">
+                        <table id="songs-table">
+                            <tr style="background-color: gray">
+                                <th style="width: 35%;">DJ</th>
+                                <th style="width: 65%;">Songs</th>
+                            </tr>
+                            <% djs.filter(dj => dj.songs.length > 0).forEach((dj) => { %>
+                                <% dj.songs.forEach((songID) => {
+                                    const song = songs.find(s => s.songID === songID)
+                                    if (song) { %>
+                                        <tr class="dj-row dj-<%= dj.name %>">
+                                            <td>
+                                                <img width="25" height="25" src="https://img.icons8.com/ultraviolet/40/test-account.png" alt="test-account" style="padding-right: 10px;" />
+                                                <%= dj.name %>
+                                            </td>
+                                            <td>
+                                                <%= song.title %>
+                                            </td>
+                                        </tr>
+                                    <% }
+                                }); %>
+                            <% }); %>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!----- SCRIPTS ----->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            window.listenerApp = {
+                initialData: {
+                    djs: <%- JSON.stringify(djs) %>,
+                    songs: <%- JSON.stringify(songs) %>
+                }
+            }  
+        </script>
+        <script src="/js/login.js" type="module"></script>
+        <script src="/js/listener.js" type="module"></script>
+    </body>
+</html>
