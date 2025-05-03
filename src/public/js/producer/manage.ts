@@ -72,30 +72,42 @@ document.getElementById('dj-playlist-select')?.addEventListener('change', functi
 
 document.getElementById('add-song-btn')?.addEventListener('click', function () {
     const selectedSongs = document.querySelectorAll('#add-dj-song-list input[name="selected-songs"]:checked') as NodeListOf<HTMLInputElement>
-    const selectedDJID = document.getElementById('dj-playlist-select') as HTMLInputElement
+    const selectedDJID = document.getElementById('dj-playlist-select') as HTMLSelectElement
     // todo: fix types
     selectedSongs.forEach(input => {
-        addSongToDJ(input.value, selectedDJID.value)
+        addSongToDJ(parseInt(input.value), parseInt(selectedDJID.value))
     })
 })
 
 document.getElementById('add-song-to-dj')?.addEventListener('input', function (event) {
+    if (!selectedDJ) return  // should put a warning to select a DJ first, or hide this element
+    
     const input = event.target as HTMLInputElement
     input.value = input.value.replace(/[^a-zA-Z]/g, '')
-    searchAndDisplaySongs(input, 'add-dj-song-list')
-});
-
-function searchAndDisplaySongs(input: HTMLInputElement, elementID: string) {
     const searchTerm = input.value.toLowerCase()
-    const matchedSongs = songs.filter(song => song.title?.toLowerCase().includes(searchTerm));
-    displaySongs(matchedSongs, elementID)
-}
+
+    let matchedSongs: Song[] = []
+
+    if (searchTerm) {
+        console.log(`Searching for song with term '${searchTerm}'...`)
+        console.log("DJ's songs: ", selectedDJ.songs)
+        matchedSongs = songs.filter(song => {
+            const songID = song.songID ?? -1
+            const songTitle = song.title?.toLowerCase() ?? ""
+            return (selectedDJ && !selectedDJ.songs.includes(songID)) &&  // not already in playlist
+            songTitle.includes(searchTerm) // matches search term
+        })
+        console.log(`Found ${matchedSongs.length} songs:\n${matchedSongs}`)
+    }
+
+    displaySongs(matchedSongs, 'add-dj-song-list')
+})
 
 // redundant: already in search.ts
 function displaySongs(matchedSongs: Song[], elementID: string) {
     const songList = document.getElementById(elementID) as HTMLTableElement
     if (!songList) return
-    songList.innerHTML = '' // clear
+    songList.innerHTML = ''
 
     matchedSongs.forEach(song => {
         if (song.songID && song.title) {
@@ -118,15 +130,16 @@ function displaySongs(matchedSongs: Song[], elementID: string) {
     })
 }
 
-function displayDJSongs(dj: DJ) {
+function displayDJSongs(dj: DJ | null | undefined) {
     const djSongsList = document.getElementById('dj-songs-list')
-    const djID = dj.djID
 
-    if (!djSongsList || !djID) return
+    if (!djSongsList) return
 
-    djSongsList.innerHTML = '' // clear
+    djSongsList.innerHTML = ''
 
-    if(dj.songs.length === 0) {
+    if (!dj) return
+
+    if (dj.songs.length === 0) {
         const li = document.createElement('li')
         li.innerText = 'No songs in playlist'
         djSongsList.appendChild(li)
@@ -141,16 +154,52 @@ function displayDJSongs(dj: DJ) {
             deleteButton.innerText = 'Delete'
             deleteButton.className = 'delete-song-btn'
             deleteButton.onclick = function() {
-                deleteSongFromDJ(songID.toString(), djID.toString())
+                
+                deleteSongFromDJ(songID, dj.djID!)
             }
             li.innerText = song.title ?? ""
             li.appendChild(deleteButton)
             djSongsList.appendChild(li)
         }
-    });
+    })
 }
 
-function addSongToDJ(songID: string, djID: string) {
+function displayDJEvents(dj: DJ | null | undefined) {
+    const djEventsList = document.getElementById('dj-events-list')
+    if (!djEventsList) return
+
+    djEventsList.innerHTML = ''
+
+    if (!dj) return
+
+    if (!dj.events || dj.events.length === 0) {
+        const li = document.createElement('li')
+        li.innerText = 'No events scheduled'
+        djEventsList.appendChild(li)
+        return
+    }
+
+    dj.events.forEach(event => {
+        const li = document.createElement('li')
+
+        const djName = document.createElement('p')
+        djName.innerText = `DJ: ${event.dj}`
+        li.appendChild(djName)
+
+        const timeSlot = document.createElement('p')
+        timeSlot.innerText = `TIME: ${event.time}`
+        li.appendChild(timeSlot)
+
+        const songList = document.createElement('p')
+        songList.innerText = `SONGS: ${event.songs.join(', ')}`
+        li.appendChild(songList)
+
+        djEventsList.appendChild(li)
+    })
+}
+
+function addSongToDJ(songID: number, djID: number) {
+    console.log(`Adding song (id=${songID})...`)
     fetch(`/api/djs/${djID}/addsong`, {
         method: 'POST',
         headers: {
@@ -161,6 +210,8 @@ function addSongToDJ(songID: string, djID: string) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            console.log(`Song (id=${djID}) added.`)
+            djs = djs.filter(dj => dj.djID !== djID) //djs = data.updatedDJ
             displayDJSongs(data.updatedDJ)
         } else {
             console.error('Error adding song:', data.message)
@@ -169,7 +220,8 @@ function addSongToDJ(songID: string, djID: string) {
     .catch(error => console.error('Error:', error))
 }
 
-function deleteSongFromDJ(songID: string, djID: string) {
+function deleteSongFromDJ(songID: number, djID: number) {
+    console.log(`Deleting song (id=${songID})...`)
     fetch(`/api/djs/${djID}/deletesong`, {
         method: 'DELETE',
         headers: {
@@ -180,7 +232,9 @@ function deleteSongFromDJ(songID: string, djID: string) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            displayDJSongs(data.updatedDJ)
+            console.log(`Song (id=${djID}) deleted.`)
+            djs = djs.filter(dj => dj.djID !== djID)  //djs = data.updatedDJ
+            displayDJSongs(data.updatedDJ)  // I shouldn't be returning all the djs back?
         } else {
             console.error('Error deleting song:', data.message)
         }

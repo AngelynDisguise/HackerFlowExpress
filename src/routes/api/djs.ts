@@ -15,11 +15,11 @@ router.get('/djs', async (_, res: Response) => {
 // Route to add song to dj
 router.post('/djs/:djID/addsong', async (req: Request, res: Response) => {
     try {
-        const djID: number  = parseInt(req.params.djID, 10)
+        const djID: number  = parseInt(req.params.djID)
         const { songID } = req.body as { songID: number }
         const dj: IDJ | null = await DJ.findOne({ djID: djID }).exec()
 
-        if (!dj) {
+        if (!dj || !songID) {
             res.status(404).json({ success: false, message: "DJ not found" })
             return
         }
@@ -39,17 +39,21 @@ router.post('/djs/:djID/addsong', async (req: Request, res: Response) => {
 // Route to delete song from dj
 router.delete('/djs/:djID/deletesong', async (req: Request, res: Response) => {
     try {
-        const djID = parseInt(req.params.djID, 10)
+        const djID = parseInt(req.params.djID)
         const { songID } = req.body as { songID: number }
+        console.log('Attempting to delete song', songID, 'from DJ', djID)
+
         const dj: IDJ | null = await DJ.findOne({ djID: djID }).exec()
 
-        if (!dj) {
+        if (!dj || !songID) {
             res.status(404).json({ success: false, message: "DJ not found" })
             return
         }
 
+        console.log('Current songs:', dj.songs)
         dj.songs = dj.songs.filter(id => id !== songID)
         await dj.save()
+        console.log('Songs after filtering:', dj.songs)
         res.json({ success: true, updatedDJ: dj })
     } catch (error) {
         res.status(500).json({ message: errorMessage(error) })
@@ -77,7 +81,7 @@ router.get('/events', async (_, res: Response) => {
 // Route to add an event to a DJ
 router.post('/djs/:djID/addevent', async (req: Request, res: Response) => {
     try {
-        const djID = parseInt(req.params.djID, 10)
+        const djID = parseInt(req.params.djID)
         const { time, songs } = req.body as { time: string, songs: string[] }
         const dj: IDJ | null = await DJ.findOne({ djID: djID }).exec()
 
