@@ -21,7 +21,7 @@ router.get('/producer/manage', async (_, res: Response) => {
       const songs_data = response2.data
       res.render(path.join(__dirname, '..', 'views', 'producer', 'manage.ejs'), {title: 'Manage', djs: djs_data, songs: songs_data})
    } catch (error) {
-      console.error('Error fetching Songs data:', error)
+      console.error('(Producer-manage) Error fetching DJs and Songs data:', error)
       res.status(500).send('Internal Server Error')
    }
 })

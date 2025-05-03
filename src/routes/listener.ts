@@ -17,7 +17,7 @@ router.get('/listener', async (_, res: Response) => {
 
       res.render(path.join(__dirname, '..', 'views', 'listener', 'index.ejs'), {title: 'Listener', djs: djs_data, songs: songs_data})
    } catch (error) {
-      console.error('Error fetching Songs data:', error)
+      console.error('(Listener) Error fetching DJs and Songs data:', error)
       res.status(500).send('Internal Server Error')
    }
    
