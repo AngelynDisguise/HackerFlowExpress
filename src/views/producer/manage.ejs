@@ -22,7 +22,12 @@
             <h3>Playlist Management</h3>
             <div style="padding: 10px;">
                <label for="dj-playlist-select">Select DJ:</label>
-               <select id="dj-playlist-select"></select>
+               <select id="dj-playlist-select">
+                  <option value="" selected="selected">Choose DJ</option>
+                  <% djs.forEach((dj) => { %>
+                     <option value="<%= dj.djID %>" innerText="<%= dj.name %>"><%= dj.name %></option>
+                  <% }); %>
+               </select>
             </div>
             <div style="padding: 10px;">
                <h4 style="margin-top: 0;">Songs in DJ's Playlist:</h4>
@@ -47,6 +52,12 @@
             <h3>DJ Events</h3>
             <ul id="dj-events-list"></ul>
          </div>
+         <script>
+            window.initialData = {
+                     djs: <%- JSON.stringify(djs) %>,
+                     songs: <%- JSON.stringify(songs) %>
+                  }
+         </script>
          <script src="/js/producer/manage.js" type="module"></script>
 </body>
 

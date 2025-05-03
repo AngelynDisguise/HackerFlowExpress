@@ -6,9 +6,11 @@ type DJ = Omit<D, "events"> & { events: Event[] }
 type Song = Pick<S, "songID" | "title">
 
 let djs: DJ[] = []
-let songs: Song[] = [];
-let events: Event[] = [];
+let songs: Song[] = []
+let selectedDJ: DJ | undefined | null = null
+//let events: Event[] = [] // never used, seems like it was intended to implement event mngmnt
 
+/* Fixed: fetched when express serves /producer route
 // Fetch DJs from the server
 fetch('/api/djs').then(response => response.json()).then((data: DJ[]) => {
     djs = data
@@ -20,25 +22,25 @@ fetch('/api/songs').then(response => response.json()).then(data => {
     songs = data;
 });
 
-// Fetch events from the server
+// Fetch events from the server  // never used
 fetch('/api/events').then(response => response.json()).then(data => {
     events = data;
     populateEventDropdown();
 });
+*/
 
+/* Fixed: data injected into manage.ejs
 function populateDJDropdown() {
-    const djSelect = document.getElementById('dj-playlist-select')
-    if (!djSelect) return
-
+    const djSelect = document.getElementById('dj-playlist-select');
     djs.forEach(dj => {
-        const option = document.createElement('option') as HTMLOptionElement
-        option.value = dj.djID?.toString() ?? ""
-        option.innerText = dj.name ?? ""
-        djSelect.appendChild(option)
+        const option = document.createElement('option');
+        option.value = dj.djID;
+        option.innerText = dj.name;
+        djSelect.appendChild(option);
     });
 }
 
-function populateEventDropdown() {
+function populateEventDropdown() {  // never used
     const eventSelect = document.getElementById('event-select')
     if (!eventSelect) return
 
@@ -49,47 +51,24 @@ function populateEventDropdown() {
         eventSelect.appendChild(option)
     });
 }
+*/
 
-function displayDJEvents(dj: DJ) {
-    const djEventsList = document.getElementById('dj-events-list')
-    if (!djEventsList) return
+// Init producer-manage page
+document.addEventListener('DOMContentLoaded', () => {
+    djs = window.initialData.djs
+    songs = window.initialData.songs
 
-    djEventsList.innerHTML = '' // clear
-
-    if (!dj.events || dj.events.length === 0) {
-        const li = document.createElement('li')
-        li.innerText = 'No events scheduled'
-        djEventsList.appendChild(li)
-        return
-    }
-
-    dj.events.forEach(event => {
-        const li = document.createElement('li')
-
-        const djName = document.createElement('p')
-        djName.innerText = `DJ: ${event.dj}`
-        li.appendChild(djName)
-
-        const timeSlot = document.createElement('p')
-        timeSlot.innerText = `TIME: ${event.time}`
-        li.appendChild(timeSlot)
-
-        const songList = document.createElement('p')
-        songList.innerText = `SONGS: ${event.songs.join(', ')}`
-        li.appendChild(songList)
-
-        djEventsList.appendChild(li)
-    })
-}
+    const DJSelector = document.getElementById('dj-playlist-select') as HTMLSelectElement
+    if (DJSelector) DJSelector.selectedIndex = 0
+})
 
 document.getElementById('dj-playlist-select')?.addEventListener('change', function() {
-    const selectedDJID: string = (this as HTMLInputElement).value
-    const dj: DJ | undefined = djs.find(dj => dj.djID === parseInt(selectedDJID)) 
-    if (dj) {
-        displayDJSongs(dj)
-        displayDJEvents(dj)
-    }
-});
+    const selectedDJID: string = (this as HTMLSelectElement).value
+    selectedDJ = djs.find(dj => dj.djID === parseInt(selectedDJID))
+    //console.log("Selected DJ: ", selectedDJID)
+    displayDJSongs(selectedDJ)
+    displayDJEvents(selectedDJ)
+})
 
 document.getElementById('add-song-btn')?.addEventListener('click', function () {
     const selectedSongs = document.querySelectorAll('#add-dj-song-list input[name="selected-songs"]:checked') as NodeListOf<HTMLInputElement>
