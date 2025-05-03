@@ -1,10 +1,6 @@
-import { IDJ } from '../../../models/dj.js'
-import { ISong } from '../../../models/song.js'
-import { ITimeslot } from '../../../models/timeslot.js'
-
-type DJ = IDJ
-type Song = ISong
-type Timeslot = ITimeslot
+import { DJ } from '../../../models/dj.js'
+import { Song } from '../../../models/song.js'
+import { Timeslot } from '../../../models/timeslot.js'
 
 let djs: DJ[] = []
 let songs: Song[] = []
@@ -150,3 +146,4 @@ document.getElementById('dj-select')?.addEventListener('change', function () {
   if (matchedSongs.length > 0) displaySongs(matchedSongs)
 })
 
+export {}

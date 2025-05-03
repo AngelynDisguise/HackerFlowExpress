@@ -8,19 +8,19 @@ const eventSchema = new Schema({
   songs: [String]
 })
 
-const djSchema = new Schema({  // removed 'Schema' type annotation - makes it 'unkown'
+const djSchema = new Schema({  // removed 'Schema' type annotation - makes it 'unknown'
   djID: {type: Number, require: true, unique: true},
   name: String,
   songs: [Number],
   events: [eventSchema]
 })
 
-export type EventData = mongoose.InferSchemaType<typeof eventSchema>
-export interface IEvent extends Document, EventData {}
+export type Event = mongoose.InferSchemaType<typeof eventSchema>
+export interface IEvent extends Document, Event {}
 
-export type DJData = mongoose.InferSchemaType<typeof djSchema>
-export interface IDJ extends Document, DJData {}
+export type DJ = mongoose.InferSchemaType<typeof djSchema>
+export interface IDJ extends Document, DJ {}
 
-const DJ: Model<IDJ> = mongoose.model<IDJ>('DJ', djSchema)
+const DJModel: Model<IDJ> = mongoose.model<IDJ>('DJ', djSchema)
 
-export default DJ
+export default DJModel

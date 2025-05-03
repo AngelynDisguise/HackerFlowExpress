@@ -1,8 +1,8 @@
-import { IDJ } from '../../models/dj'
-import { ISong } from '../../models/song'
+import { DJ as D } from '../../models/dj'
+import { Song as S } from '../../models/song'
 
-type DJ = Pick<IDJ, "name" | "songs">
-type Song = Pick<ISong, "songID" | "title" | "genre">
+type DJ = Pick<D, "name" | "songs">
+type Song = Pick<S, "songID" | "title" | "genre">
 
 interface UserPreferences { // already in login.js
     genre: {
@@ -20,8 +20,8 @@ let songs: Song[] = []
 
 // Init listener page
 document.addEventListener('DOMContentLoaded', () => {
-    djs = window.listenerApp.initialData.djs
-    songs = filterAvailableSongs(djs, window.listenerApp.initialData.songs)
+    djs = window.initialData.djs
+    songs = filterAvailableSongs(djs, window.initialData.songs)
 
     initWebSocket() // connect to socket.io
     initEventListeners()
@@ -176,16 +176,15 @@ function applyCurrentFilters() {
         const genres: string[] = Object.keys(preferences.genre) // of type UserPreferencs.genre
         type Genre = keyof UserPreferences["genre"]
         
-        filteredSongs = songs.filter( (song: Song) => {
-                return genres.some(genre => {
-                    console.log(`Song '${song.title}' matches genre '${genre}': `, preferences.genre[genre as Genre] && song.genre && song.genre[genre as Genre])
-                    return preferences.genre[genre as Genre] && // user selected this genre
+        filteredSongs = songs.filter((song: Song) => {
+                genres.some(genre => {
+                    preferences.genre[genre as Genre] && // user selected this genre
                     song.genre && song.genre[genre as Genre] // genre matches current song (and song has genres)
                 }) 
         })
         
         if(filteredSongs.length != 0){
-            console.log("Matched songs: ", filteredSongs.map(song => ({"title": song.title, "genres": song.genre})))
+            //console.log("Matched songs: ", filteredSongs.map(song => ({"title": song.title, "genres": song.genre})))
         } else {
             console.log("No songs exist with selected preferences.")
         }

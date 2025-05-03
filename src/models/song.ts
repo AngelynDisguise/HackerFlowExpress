@@ -17,11 +17,11 @@ const songSchema = new Schema({
   popularity: Number
 })
 
-export type SongData = mongoose.InferSchemaType<typeof songSchema>
-export interface ISong extends Document, SongData {}
+export type Song = mongoose.InferSchemaType<typeof songSchema>
+export interface ISong extends Document, Song {}
 
-const Song: Model<ISong> = mongoose.model<ISong>('Song', songSchema)
+const SongModel: Model<ISong> = mongoose.model<ISong>('Song', songSchema)
 
-export default Song
+export default SongModel
 
 

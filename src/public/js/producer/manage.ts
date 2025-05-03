@@ -1,9 +1,9 @@
-import { IDJ, IEvent } from '../../../models/dj.js'
-import { ISong } from '../../../models/song.js'
+import { DJ as D, Event as E } from '../../../models/dj.js'
+import { Song as S } from '../../../models/song.js'
 
-type DJ = IDJ
-type Song = Pick<ISong, "songID" | "title">
-type Event = Pick<IEvent, "eventID" | "dj" | "time">
+type Event = Omit<E, "eventID">
+type DJ = Omit<D, "events"> & { events: Event[] } 
+type Song = Pick<S, "songID" | "title">
 
 let djs: DJ[] = []
 let songs: Song[] = [];
@@ -208,3 +208,5 @@ function deleteSongFromDJ(songID: string, djID: string) {
     })
     .catch(error => console.error('Error:', error))
 }
+
+export {}

@@ -2,9 +2,9 @@ import express, { Request, Response } from "express"
 import path from "path"
 import fs from "fs"
 
-import { DJData, EventData } from "../models/dj.js"
-import { SongData } from "../models/song.js"
-import { TimeslotData } from "../models/timeslot.js"
+import { DJ, Event } from "../models/dj.js"
+import { Song } from "../models/song.js"
+import { Timeslot } from "../models/timeslot.js"
 
 import { fileURLToPath } from "url"
 const __filename = fileURLToPath(import.meta.url)
@@ -17,10 +17,10 @@ const readJSON = (filePath: fs.PathOrFileDescriptor) => {
    return JSON.parse(rawData)
 }
 
-const djs_data: DJData[] = readJSON(path.join(__dirname, '..', 'data', 'djs.json'))
-const songs_data: SongData[] = readJSON(path.join(__dirname, '..', 'data', 'songs.json'))
-const timeslots_data: TimeslotData = readJSON(path.join(__dirname, '..', 'data', 'timeslots.json'))
-const events_data: EventData[] = readJSON(path.join(__dirname, '..', 'data', 'events.json'))
+const djs_data: DJ[] = readJSON(path.join(__dirname, '..', 'data', 'djs.json'))
+const songs_data: Song[] = readJSON(path.join(__dirname, '..', 'data', 'songs.json'))
+const timeslots_data: Timeslot = readJSON(path.join(__dirname, '..', 'data', 'timeslots.json'))
+const events_data: Event[] = readJSON(path.join(__dirname, '..', 'data', 'events.json'))
 
 router.get('/api/djs', (_, res: Response) => {
    res.json(djs_data)
@@ -42,7 +42,7 @@ router.get('/api/events', (_, res: Response) => {
 /* Upload data to events */
 router.post('/api/events', (req: Request, res: Response) => {
    try {
-      const newEvent: EventData = req.body
+      const newEvent: Event = req.body
 
       // Generate a unique id for the new event, could be more sophisticated
       newEvent.eventID = events_data.length + 1

@@ -4,9 +4,9 @@ const timeslotSchema = new Schema({
   slot: String
 }, {_id : false})
 
-export type TimeslotData = mongoose.InferSchemaType<typeof timeslotSchema>
-export interface ITimeslot extends Document, TimeslotData {}
+export type Timeslot = mongoose.InferSchemaType<typeof timeslotSchema>
+export interface ITimeslot extends Document, Timeslot {}
 
-const Timeslot: Model<ITimeslot> = mongoose.model<ITimeslot>('Timeslot', timeslotSchema)
+const TimeslotModel: Model<ITimeslot> = mongoose.model<ITimeslot>('Timeslot', timeslotSchema)
 
-export default Timeslot
+export default TimeslotModel

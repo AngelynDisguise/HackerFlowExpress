@@ -2,37 +2,33 @@ import fs from "fs"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 
-import DJ, { DJData } from "./models/dj.js"
-import Song, { SongData } from "./models/song.js"
-import Timeslot, { TimeslotData } from "./models/timeslot.js"
+import DJModel, { DJ } from "./models/dj.js"
+import SongModel, { Song } from "./models/song.js"
+import TimeslotModel, { Timeslot } from "./models/timeslot.js"
 
 dotenv.config()
 
-const DJs: DJData[] = JSON.parse(fs.readFileSync('./src/data/djs.json', 'utf-8'))
-const Songs: SongData[] = JSON.parse(fs.readFileSync('./src/data/songs.json', 'utf-8'))
-const Timeslots: TimeslotData[] = JSON.parse(fs.readFileSync('./src/data/timeslots.json', 'utf-8'))
+const DJs: DJ[] = JSON.parse(fs.readFileSync('./src/data/djs.json', 'utf-8'))
+const Songs: Song[] = JSON.parse(fs.readFileSync('./src/data/songs.json', 'utf-8'))
+const Timeslots: Timeslot[] = JSON.parse(fs.readFileSync('./src/data/timeslots.json', 'utf-8'))
 
 async function seedDB() {
    try {
       console.log("Clearing existing data...")
       await Promise.all([
-         DJ.deleteMany({}), 
-         Song.deleteMany({}),
-         Timeslot.deleteMany({})
+         DJModel.deleteMany({}), 
+         SongModel.deleteMany({}),
+         TimeslotModel.deleteMany({})
       ])
       console.log("Database cleared")
 
-      // //console.log(DJs)
-      // DJs.forEach(dj => {
-      //    console.log(dj.events)
-      // })
-      await DJ.insertMany(DJs)
+      await DJModel.insertMany(DJs)
       console.log(`${DJs.length} DJs imported`)
       
-      await Song.insertMany(Songs)
+      await SongModel.insertMany(Songs)
       console.log(`${Songs.length} Songs imported`)
       
-      await Timeslot.insertMany(Timeslots.map(slot => ({ slot })))
+      await TimeslotModel.insertMany(Timeslots.map(slot => ({ slot })))
       console.log(`${Timeslots.length} Timeslots imported`)
 
       console.log("Database seeding completed successfully!")

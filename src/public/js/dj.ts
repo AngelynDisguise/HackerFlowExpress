@@ -1,8 +1,7 @@
-import { IDJ } from '../../models/dj.js'
-import { ITimeslot } from '../../models/timeslot.js'
+import { DJ as D } from '../../models/dj.js'
+import { Timeslot } from '../../models/timeslot.js'
 
-type DJ = Pick<IDJ, "events">
-type Timeslot = ITimeslot
+type DJ = Pick<D, "events">
 
 let djs: DJ[]
 let timeslots: Timeslot[]
@@ -82,3 +81,5 @@ function displaySongs(selectedTime: string, elementID: string) {
         displaySongs(selectedTime, 'dj-songs');
     })
 })()
+
+export {}
